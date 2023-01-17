@@ -1,56 +1,51 @@
+import 'dart:async';
+
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_redux/flutter_redux.dart';
+import 'package:get/get.dart';
 import 'package:wallhevan/component/picture_comp.dart';
-import 'package:wallhevan/pages/search.dart';
-import 'package:wallhevan/store/index.dart';
-import 'package:wallhevan/store/model_view/picture_list_model.dart';
-import 'package:wallhevan/store/search_response/picture_info.dart';
-
-import '../store/picture_res/picture_data.dart';
+import 'package:wallhevan/pages/search_query.dart';
+import 'package:wallhevan/store/store.dart';
+import '../component/search_page.dart';
 import 'global_theme.dart';
+import '/generated/l10n.dart';
+import './picture_views.dart' show picDataBuild;
 
-class FavPictureViews extends StatelessWidget {
-  const FavPictureViews({super.key, required this.back, required this.currentIndex});
-  final bool back;
-  final int currentIndex;
-  String getType(String purity){
-    switch(purity){
-     case 'sketchy':
-        return '2';
-     case 'nsfw':
-        return '3';
-     default:
-        return '1';
-    }
+class FavPictureViews extends StatefulWidget {
+  const FavPictureViews({
+    super.key,
+    required this.curIndex,
+  });
+  final int curIndex;
+  @override
+  State<StatefulWidget> createState() => _FavPictureViewsState();
+}
+
+class _FavPictureViewsState extends State<FavPictureViews> {
+  CollectionController load = Get.find();
+
+  final StoreController controller = Get.find();
+
+  @override
+  void initState() {
+    super.initState();
+    controller.updatePic(load.pictures[widget.curIndex].path);
   }
-  Widget picDataBuild(String id,Function showSearch) {
 
-    return FutureBuilder<PictureData>(
-        future: getPictureInfo(id),
-        builder: (context, AsyncSnapshot<PictureData> snapshot) {
-          var data = snapshot.data;
-          if (data != null) {
-            var tags = data.tags;
-            List<Widget> tagWidgets = [];
-            tagWidgets.addAll(
-                tags.map((tag) => HGFButton(
-                    type: getType(tag.purity),
-                    text: tag.name,
-                    selected: true,
-                    onSelected: (_)=>showSearch(tag.id))));
-            return Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Wrap(
-                  spacing: 2,
-                  children: tagWidgets,
-                )
-              ],
-            );
-          }
-          return Container();
-        });
+  @override
+  void dispose() {
+    Timer(const Duration(milliseconds: 100), () {
+      load.renderer();
+    });
+    super.dispose();
+  }
+
+  void addSearchPage(BuildContext context, String keyword) {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (_) => SearchBarPage(
+                keyword: keyword, tag: getTag(q: keyword, sort: 'relevance'))));
   }
 
   @override
@@ -60,82 +55,70 @@ class FavPictureViews extends StatelessWidget {
       child: ExtendedImageSlidePage(
           slideAxis: SlideAxis.vertical,
           slideType: SlideType.onlyImage,
-          onSlidingPage: (state) {
-            ///you can change other widgets' state on page as you want
-            ///base on offset/isSliding etc
-            //var offset= state.offset;
-            // var showSwiper = !state.isSliding;
-            // if (showSwiper != _showSwiper) {
-            //   // do not setState directly here, the image state will change,
-            //   // you should only notify the widgets which are needed to change
-            //   // setState(() {
-            //   // _showSwiper = showSwiper;
-            //   // });
-            //
-            //   _showSwiper = showSwiper;
-            //   rebuildSwiper.add(_showSwiper);
-            // }
-          },
-          child: StoreConnector<MainState, PictureListModel>(
-              distinct: true,
-              onWillChange: (now,old){
-              },
-              converter: (store) =>
-                  PictureListModel.formStore(store),
-              builder: (context, pictureView) {
-                List<PictureInfo> pictures = pictureView.pictures;
-                return GlobalTheme.backImg(
-                  ExtendedImageGesturePageView.builder(
+          onSlidingPage: (state) {},
+          // slideScaleHandler:(offset){
+          //
+          // },
+          // slideEndHandler: (){
+          //
+          // },
+          child: GlobalTheme.backImg(
+            GetBuilder(
+                init: load,
+                builder: (_) {
+                  return ExtendedImageGesturePageView.builder(
                     itemBuilder: (BuildContext context, int index) {
-                      var item = pictures[index].path;
+                      var picture = load.pictures[index];
                       Widget image = PictureComp(
-                          image: pictures[index],
+                          image: picture,
                           type: PictureComp.pictureViews,
-                          url: pictures[index].path);
-                      image = ListView(
+                          url: picture.path);
+                      image = SingleChildScrollView(
+                          child: Column(
                         children: [
+                          // Expanded(child: image),
                           image,
-                          picDataBuild(pictures[index].id,(int tagId){
-                            // if(back){
-                            //   pictureView.setParams('id:$tagId',init:true);
-                            //   Navigator.pop(context);
-                            // }else{
-                              pictureView.setParams('id:$tagId');
-                              // Navigator.push(context, MaterialPageRoute(builder: (_)=> SearchBarPage(keyword: 'id:$tagId')));
-                            // }
-                          }),
+                          Center(
+                              child: HGFButton(
+                            text: S.current.more,
+                            type: "1",
+                            selected: true,
+                            size: 44,
+                            onSelected: (_) =>
+                                addSearchPage(context, 'like:${picture.id}'),
+                          )),
+                          picDataBuild(
+                              picture.id,
+                              (int tagId) =>
+                                  addSearchPage(context, 'id:$tagId')),
                         ],
-                      );
-                      image = Container(
-                        padding: const EdgeInsets.all(5.0),
-                        child: image,
-                      );
-                      if (index == currentIndex) {
+                      ));
+                      // image = Center(
+                      //   child: image,
+                      // );
+                      if (index == widget.curIndex) {
                         return Hero(
-                          tag: item + index.toString(),
+                          tag: picture.path + index.toString(),
                           child: image,
                         );
                       } else {
                         return image;
                       }
                     },
-                    itemCount: pictures.length,
+                    itemCount: load.pictures.length,
                     onPageChanged: (int index) {
-                      pictureView.updatePic(index);
-                      if (index >= pictures.length - 2) {
-                        pictureView.loadMore();
+                      controller.updatePic(load.pictures[index].path);
+                      if (index >= load.pictures.length - 2) {
+                        getFavorites(load);
                       }
                     },
-                    // slideScaleHandler:(offset){
-                    //
-                    // },
                     controller: ExtendedPageController(
-                      initialPage: currentIndex,
+                      initialPage: widget.curIndex,
                     ),
                     scrollDirection: Axis.horizontal,
-                  ),
-                );
-              })),
+                  );
+                }),
+          )),
     );
   }
 }

@@ -5,9 +5,7 @@ import 'package:html/parser.dart' show parse;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wallhevan/api/api.dart';
 import 'package:wallhevan/store/collections/fav_data.dart';
-import 'package:wallhevan/store/collections/collections.dart';
-import 'package:wallhevan/store/picture_res/picture_data.dart';
-import 'package:wallhevan/store/picture_res/picture_res.dart';
+import 'package:wallhevan/store/search_response/search_result.dart';
 import 'collections/fav_response.dart';
 import 'search_response/picture_info.dart';
 
@@ -155,7 +153,6 @@ class PictureQuery {
   static PictureQuery getQuery(MainState state) {
     return state.favQuery;
   }
-
 }
 
 class SearchParams {
@@ -374,7 +371,7 @@ Future<void> getFavorites(Store<MainState> store) async {
   )
       .then((response) {
     query.loading = false;
-    Collections collections = Collections.fromJson(response.data);
+    SearchResult collections = SearchResult.fromJson(response.data);
     final meta = collections.meta;
     if (meta != null) {
       query.total = meta.total;
@@ -385,12 +382,6 @@ Future<void> getFavorites(Store<MainState> store) async {
   }).catchError((error) => {print(error.toString())});
 }
 
-Future<PictureData> getPictureInfo(String id) async {
-  String apiKey = await StorageManger.getApiKey();
-  Response res =
-      await dio.get('/api/v1/w/$id', queryParameters: {'apikey': apiKey});
-  return PictureRes.fromJson(res.data).data!;
-}
 
 Future<void> getFavList(Store<MainState> store) async {
   MainState state = store.state;

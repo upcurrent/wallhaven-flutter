@@ -27,6 +27,10 @@ class StorageManger{
     SharedPreferences prefs = await StorageManger.prefs;
     return prefs.getString('apiKey') ?? 'MJq2IZyeA8QI43iccfNDJSpWQ8qKw8w5';
   }
+  static Future<String> getUserName() async {
+    SharedPreferences prefs = await StorageManger.prefs;
+    return prefs.getString('userName') ?? 'ikism';
+  }
 }
 
 Future<Dio> initDio() async{

@@ -5,8 +5,8 @@ import 'package:wallhevan/pages/global_theme.dart';
 import 'package:wallhevan/pages/picture_views.dart';
 import 'package:wallhevan/store/search_response/picture_info.dart';
 
-import '../component/picture_comp.dart';
-import '../store/store.dart';
+import '/component/picture_comp.dart';
+import '/store/store.dart';
 
 class PictureList extends StatefulWidget {
   const PictureList({super.key, this.keepAlive, this.sort, required this.tag});
@@ -25,7 +25,7 @@ class PictureList extends StatefulWidget {
 
 class _PictureListState extends State<PictureList>
     with AutomaticKeepAliveClientMixin {
-  late LoadResult load;
+  late PageLoadController load;
   StoreController controller = Get.find();
 
   @override
@@ -49,7 +49,7 @@ class _PictureListState extends State<PictureList>
         }
         return false;
       },
-      child: GetBuilder<LoadResult>(
+      child: GetBuilder<PageLoadController>(
           tag: widget.tag,
           builder: (load) {
             return MasonryGridView.count(

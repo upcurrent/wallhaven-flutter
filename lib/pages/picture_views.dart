@@ -4,10 +4,9 @@ import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:wallhevan/component/picture_comp.dart';
-import 'package:wallhevan/pages/search.dart';
-import 'package:wallhevan/store/index.dart';
+import 'package:wallhevan/pages/search_query.dart';
 import 'package:wallhevan/store/store.dart';
-
+import 'package:getwidget/getwidget.dart';
 import '../component/search_page.dart';
 import '../store/picture_res/picture_data.dart';
 import 'global_theme.dart';
@@ -19,69 +18,19 @@ class PictureViews extends StatefulWidget {
     required this.load,
     required this.curIndex,
   });
-  final LoadResult load;
+  final PageLoadController load;
   final int curIndex;
   @override
   State<StatefulWidget> createState() => _PictureViewsState();
 }
 
 class _PictureViewsState extends State<PictureViews> {
-  String getType(String purity) {
-    switch (purity) {
-      case 'sketchy':
-        return '2';
-      case 'nsfw':
-        return '3';
-      default:
-        return '1';
-    }
-  }
-
   final StoreController controller = Get.find();
 
   @override
   void initState() {
     super.initState();
     controller.updatePic(widget.load.pictures[widget.curIndex].path);
-  }
-
-  Widget picDataBuild(String id, Function showSearch) {
-    return FutureBuilder<PictureData>(
-        future: getPictureInfo(id),
-        builder: (context, AsyncSnapshot<PictureData> snapshot) {
-          var data = snapshot.data;
-          if (data != null) {
-            var tags = data.tags;
-            List<Widget> tagWidgets = [];
-            tagWidgets.addAll(tags.map((tag) => HGFButton(
-                type: getType(tag.purity),
-                text: tag.name,
-                selected: true,
-                onSelected: (_) => showSearch(tag.id))));
-            return Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Wrap(
-                  spacing: 2,
-                  children: [
-                    Image.network(data.uploader!.avatar!.p128),
-                    Text(data.uploader!.username,
-                        style: const TextStyle(
-                            color: Color(0xff387799),
-                            decoration: TextDecoration.none,
-                            fontSize: 25)),
-                  ],
-                ),
-                Wrap(
-                  spacing: 2,
-                  children: tagWidgets,
-                )
-              ],
-            );
-          }
-          return Container();
-        });
   }
 
   @override
@@ -174,4 +123,53 @@ class _PictureViewsState extends State<PictureViews> {
           )),
     );
   }
+}
+Widget picDataBuild(String id, Function showSearch) {
+  String getType(String purity) {
+    switch (purity) {
+      case 'sketchy':
+        return '2';
+      case 'nsfw':
+        return '3';
+      default:
+        return '1';
+    }
+  }
+
+  return FutureBuilder<PictureData>(
+      future: getPictureInfo(id),
+      builder: (context, AsyncSnapshot<PictureData> snapshot) {
+        var data = snapshot.data;
+        if (data != null) {
+          var tags = data.tags;
+          List<Widget> tagWidgets = [];
+          tagWidgets.addAll(tags.map((tag) => HGFButton(
+              type: getType(tag.purity),
+              text: tag.name,
+              selected: true,
+              onSelected: (_) => showSearch(tag.id))));
+          return Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Card(
+                  color: Colors.transparent,
+                  child: GFListTile(
+                      avatar: GFAvatar(
+                        backgroundImage:
+                            NetworkImage(data.uploader!.avatar!.p128),
+                      ),
+                      color: Colors.transparent,
+                      titleText: data.uploader!.username,
+                      listItemTextColor: GFColors.WHITE,
+                      icon: const Icon(Icons.favorite))),
+              Wrap(
+                spacing: 2,
+                children: tagWidgets,
+              )
+            ],
+          );
+        }
+        return Container();
+      });
 }

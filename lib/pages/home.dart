@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:wallhevan/pages/picture_list.dart';
-
+import 'package:wallhevan/component/picture_grid_view.dart';
+import 'package:wallhevan/pages/picture_views.dart';
 import '../component/search_page.dart';
 import '../store/store.dart';
 
@@ -15,7 +16,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final String tag = getTag();
   String sorting = 'toplist';
-  late LoadResult load;
+  late PageLoadController load;
 
   final StoreController storeController = Get.find();
 
@@ -45,7 +46,7 @@ class _HomePageState extends State<HomePage> {
     Padding card(Text text, Image image, String value) {
       return Padding(
           padding: const EdgeInsets.fromLTRB(0, 0, 5, 0),
-          child: GetBuilder<LoadResult>(
+          child: GetBuilder<PageLoadController>(
               init: load,
               builder: (load) {
                 return GestureDetector(
@@ -89,12 +90,11 @@ class _HomePageState extends State<HomePage> {
 
   String keyword = '';
 
-  void scrollTop() {}
-
   @override
   void initState() {
     super.initState();
     load = Get.find(tag: tag);
+    getPictureList(load);
   }
 
   void setKeyword(String value) {
@@ -103,10 +103,6 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  // void _onReduxChange(HandleActions? old, HandleActions now) {
-  //   // print(old);
-  //   // print(now);
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -153,7 +149,7 @@ class _HomePageState extends State<HomePage> {
                                 MaterialPageRoute(
                                     builder: (_) => SearchBarPage(
                                           keyword: '',
-                                          tag: getTag(sort: 'relevance'),
+                                          tag: getTag(q:'',sort: 'relevance'),
                                         )));
                           },
                           // onSubmitted: (value) {
@@ -187,7 +183,20 @@ class _HomePageState extends State<HomePage> {
               )
             ];
           },
-          body: PictureList(tag: tag),
+          body: RefreshIndicator(
+            onRefresh: () async {
+              load.init(renderer: true);
+              return getPictureList(load);
+            },
+            child: GetBuilder<PageLoadController>(
+                init: load,
+                builder: (load) {
+                  return PictureGridView(
+                      pictures: load.pictures,
+                      loadMore: load.loadMore,
+                      toViews: load.toViews);
+                }),
+          ),
         ));
   }
 }

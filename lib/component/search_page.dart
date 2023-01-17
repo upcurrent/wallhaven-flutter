@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:wallhevan/pages/picture_list.dart';
+import 'package:wallhevan/component/picture_grid_view.dart';
 import 'package:wallhevan/store/store.dart';
 
 class SearchBarPage extends StatelessWidget {
@@ -11,8 +11,7 @@ class SearchBarPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final LoadResult load = Get.find(tag: tag);
-    void init(String value) {
+    void init(PageLoadController load, String value) {
       load.q = value;
       load.init(renderer: true);
       getPictureList(load);
@@ -31,34 +30,41 @@ class SearchBarPage extends StatelessWidget {
                 });
           },
         ),
-        title:
-           GetBuilder<LoadResult>(
-            init:load,
-            builder: (_) {
-              return TextField(
-                controller: TextEditingController(
-                  text: load.q,
-                ),
-                textInputAction: TextInputAction.search,
-                cursorColor: Colors.white,
-                style: const TextStyle(color: Colors.white),
-                onSubmitted: (value) {
-                  init(value);
-                },
-                decoration: const InputDecoration(
-                    hintText: 'Search....',
-                    suffixIcon: Icon(
-                      Icons.search,
-                      color: Colors.white,
-                    )),
-              );
-            },
-          ),
-
+        title: GetBuilder<PageLoadController>(
+          tag: tag,
+          builder: (load) {
+            return TextField(
+              controller: TextEditingController(
+                text: load.q,
+              ),
+              textInputAction: TextInputAction.search,
+              cursorColor: Colors.white,
+              style: const TextStyle(color: Colors.white),
+              onSubmitted: (value) {
+                init(load,value);
+              },
+              decoration: const InputDecoration(
+                  hintText: 'Search....',
+                  suffixIcon: Icon(
+                    Icons.search,
+                    color: Colors.white,
+                  )),
+            );
+          },
+        ),
       ),
       body: AnimatedSwitcher(
         duration: const Duration(milliseconds: 300),
-        child: PictureList(tag: tag),
+        child: GetBuilder<PageLoadController>(
+          tag: tag,
+          builder: (load) {
+            printError(info:"24222");
+            return PictureGridView(
+                pictures: load.pictures,
+                loadMore: load.loadMore,
+                toViews: load.toViews);
+          },
+        ),
       ),
     );
   }
