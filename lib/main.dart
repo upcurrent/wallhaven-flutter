@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -11,8 +10,7 @@ import 'package:wallhevan/pages/global_theme.dart';
 import 'package:wallhevan/store/store.dart';
 import 'pages/favorites.dart';
 import 'pages/home.dart';
-import 'pages/search_query.dart';
-// import 'store/index.dart';
+import 'pages/picture_filter.dart';
 import 'component/picture.dart';
 import 'account/account.dart';
 import 'generated/l10n.dart';
@@ -126,9 +124,10 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
         resizeToAvoidBottomInset: false,
-        drawer: GFDrawer(
+        drawer: Drawer(
+          width: 400,
           // elevation: 0,
-          child: GlobalTheme.backImg(const SearchPage()),
+          child: GlobalTheme.backImg(const PictureFilter()),
         ),
         bottomNavigationBar: BottomNavigationBar(
             backgroundColor: const Color(0xff387799),
@@ -179,7 +178,7 @@ class _MyHomePageState extends State<MyHomePage> {
           }),
           children: const [
             HomePage(),
-            SearchPage(),
+            PictureFilter(),
             FavoritesPage(),
             Account()
           ],

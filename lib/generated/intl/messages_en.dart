@@ -23,6 +23,7 @@ class MessageLookup extends MessageLookupByLibrary {
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
         "anime": MessageLookupByLibrary.simpleMessage("Anime"),
+        "categories": MessageLookupByLibrary.simpleMessage("Categories"),
         "favorites": MessageLookupByLibrary.simpleMessage("Favorites"),
         "favoritesTab": MessageLookupByLibrary.simpleMessage("Favorites"),
         "general": MessageLookupByLibrary.simpleMessage("General"),
@@ -32,9 +33,11 @@ class MessageLookup extends MessageLookupByLibrary {
         "more": MessageLookupByLibrary.simpleMessage("More like this"),
         "my": MessageLookupByLibrary.simpleMessage("Mine"),
         "people": MessageLookupByLibrary.simpleMessage("People"),
+        "purity": MessageLookupByLibrary.simpleMessage("Purity"),
         "random": MessageLookupByLibrary.simpleMessage("random"),
         "relevance": MessageLookupByLibrary.simpleMessage("Relevance"),
         "search": MessageLookupByLibrary.simpleMessage("Search"),
+        "sorting": MessageLookupByLibrary.simpleMessage("Sorting"),
         "t_1M": MessageLookupByLibrary.simpleMessage("Last Month"),
         "t_1d": MessageLookupByLibrary.simpleMessage("Last Day"),
         "t_1w": MessageLookupByLibrary.simpleMessage("Last Week"),
@@ -43,6 +46,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "t_3d": MessageLookupByLibrary.simpleMessage("Last Three Days"),
         "t_6M": MessageLookupByLibrary.simpleMessage("Last 6 Months "),
         "topList": MessageLookupByLibrary.simpleMessage("TopList"),
+        "topRange": MessageLookupByLibrary.simpleMessage("TopRange"),
         "views": MessageLookupByLibrary.simpleMessage("Views")
       };
 }

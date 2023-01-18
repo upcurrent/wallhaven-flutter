@@ -2,13 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:get/get.dart';
 import 'package:wallhevan/pages/global_theme.dart';
-import 'package:wallhevan/store/search_response/picture_info.dart';
+import 'package:wallhevan/store/search_res/picture_info.dart';
 
 import '/component/picture_comp.dart';
 import '/store/store.dart';
 
 class PictureGridView extends StatefulWidget {
-  const PictureGridView({super.key, this.keepAlive, required this.pictures, required this.loadMore, required this.toViews});
+  const PictureGridView(
+      {super.key,
+      this.keepAlive,
+      required this.pictures,
+      required this.loadMore,
+      required this.toViews});
 
   final bool? keepAlive;
 
@@ -26,8 +31,6 @@ class PictureGridView extends StatefulWidget {
 
 class _PictureGridViewState extends State<PictureGridView>
     with AutomaticKeepAliveClientMixin {
-  StoreController controller = Get.find();
-
   @override
   void initState() {
     super.initState();
@@ -40,7 +43,7 @@ class _PictureGridViewState extends State<PictureGridView>
     return GlobalTheme.backImg(NotificationListener<ScrollNotification>(
         onNotification: (ScrollNotification scrollInfo) {
           if (scrollInfo.metrics.pixels >=
-                  scrollInfo.metrics.maxScrollExtent - 400) {
+              scrollInfo.metrics.maxScrollExtent - 400) {
             widget.loadMore();
             return true;
           }
@@ -54,8 +57,8 @@ class _PictureGridViewState extends State<PictureGridView>
             String url = pictures[index].thumbs.original!;
             String path = pictures[index].path;
             return GestureDetector(onTap: () {
-              widget.toViews(context,index);
-            }, child: Obx(() {
+              widget.toViews(context, index);
+            }, child: GetBuilder<StoreController>(builder: (controller) {
               return controller.cachePic.contains(path)
                   ? PictureComp.create(context, pictures[index], path)
                   : PictureComp.create(context, pictures[index], url);

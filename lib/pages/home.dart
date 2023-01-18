@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:wallhevan/pages/picture_list.dart';
 import 'package:wallhevan/component/picture_grid_view.dart';
-import 'package:wallhevan/pages/picture_views.dart';
-import '../component/search_page.dart';
+import '../component/picture_search.dart';
 import '../store/store.dart';
 
 class HomePage extends StatefulWidget {
@@ -94,7 +92,6 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     load = Get.find(tag: tag);
-    getPictureList(load);
   }
 
   void setKeyword(String value) {
@@ -147,7 +144,7 @@ class _HomePageState extends State<HomePage> {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (_) => SearchBarPage(
+                                    builder: (_) => PictureSearch(
                                           keyword: '',
                                           tag: getTag(q:'',sort: 'relevance'),
                                         )));

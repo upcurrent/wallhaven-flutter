@@ -1,30 +1,63 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:wallhevan/store/search_response/picture_info.dart';
-import 'package:wallhevan/store/search_response/search_result.dart';
-import 'package:wallhevan/store/collections/fav_data.dart';
-import '/generated/l10n.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:wallhevan/component/pictire_page_view.dart';
+import 'package:wallhevan/store/search_res/picture_info.dart';
+import 'package:wallhevan/store/search_res/search_result.dart';
+import 'package:wallhevan/store/collection_res/fav_data.dart';
 import '/api/api.dart';
-import 'package:dio/dio.dart' as dio_lib;
-import 'collections/fav_response.dart';
+import 'collection_res/fav_response.dart';
 import 'package:wallhevan/store/picture_res/picture_data.dart';
 import 'package:wallhevan/store/picture_res/picture_res.dart';
-import 'package:wallhevan/pages/picture_views.dart';
 
-class StoreController {
-  var cachePic = <String>{}.obs;
-  var cachePictureData = <String, PictureData>{}.obs;
+class StorageManger {
+  static SharedPreferences? _prefs;
+  static Future<SharedPreferences> get prefs async {
+    return _prefs ?? await SharedPreferences.getInstance();
+  }
+
+  static init() async {
+    _prefs = await SharedPreferences.getInstance();
+  }
+
+  static Future<String> getApiKey() async {
+    SharedPreferences prefs = await StorageManger.prefs;
+    return prefs.getString('apiKey') ?? 'MJq2IZyeA8QI43iccfNDJSpWQ8qKw8w5';
+  }
+
+  static Future<String> getUserName() async {
+    SharedPreferences prefs = await StorageManger.prefs;
+    return prefs.getString('userName') ?? 'ikism';
+  }
+
+  static void setParams(Map<String, String> params) async {
+    SharedPreferences prefs = await StorageManger.prefs;
+    params.forEach((key, value) {
+      prefs.setString(key, value);
+    });
+  }
+
+  static Future<String> getParams() async {
+    SharedPreferences prefs = await StorageManger.prefs;
+    return prefs.getString('userName') ?? 'ikism';
+  }
+}
+
+class StoreController extends GetxController {
+  var cachePic = <String>{};
+  var cachePictureData = <String, PictureData>{};
   final ScrollController homeScrollCtrl =
       ScrollController(keepScrollOffset: false);
 
   void updatePic(String path) {
     if (cachePic.contains(path)) return;
-    cachePic().add(path);
+    cachePic.add(path);
   }
 
   void updatePictureData(String id, PictureData value) {
     if (cachePictureData.containsKey(id)) return;
     cachePictureData.addAll({id: value});
+    update();
   }
 
   void homeScrollTop() {
@@ -43,29 +76,6 @@ String getTag({String q = "", String sort = "toplist"}) {
 }
 
 class SearchQuery extends GetxController {
-  final List<Map> topRangeBtn = [
-    {'value': '1d', 'name': S.current.t_1d},
-    {'value': '3d', 'name': S.current.t_3d},
-    {'value': '1w', 'name': S.current.t_1w},
-    {'value': '1M', 'name': S.current.t_1M},
-    {'value': '3M', 'name': S.current.t_3M},
-    {'value': '6M', 'name': S.current.t_6M},
-    {'value': '1y', 'name': S.current.t_1y},
-  ];
-  final List<Map> sortingBtn = [
-    {'value': 'toplist', 'name': S.current.topList},
-    {'value': 'hot', 'name': S.current.hot},
-    {'value': 'random', 'name': S.current.random},
-    {'value': 'date_added', 'name': S.current.latest},
-    {'value': 'views', 'name': S.current.views},
-    {'value': 'favorites', 'name': S.current.favorites},
-    {'value': 'relevance', 'name': S.current.relevance},
-  ];
-  final List<Map> cateBtn = [
-    {'value': 'general', 'name': S.current.general},
-    {'value': 'anime', 'name': S.current.anime},
-    {'value': 'people', 'name': S.current.people},
-  ];
   final Map<String, String> params = {
     'categories': '010',
     'purity': '110',
@@ -92,22 +102,56 @@ class SearchQuery extends GetxController {
 
   void setCategories(String key) {
     categoriesMap[key] = categoriesMap[key] == '0' ? '1' : '0';
-    List<String> cateStr = [];
-    cateStr.addAll(categoriesMap.values);
-    params.addAll({'categories': cateStr.join('')});
+    setParams({'categories': join(categoriesMap.values)});
     update();
+    StorageManger.setParams(categoriesMap);
   }
 
   void setPurity(String key) {
     purityMap[key] = purityMap[key] == '0' ? '1' : '0';
-    List<String> purityStr = [];
-    purityStr.addAll(purityMap.values);
-    params.addAll({'purity': purityStr.join('')});
+    var purity = join(purityMap.values);
+    if(purity == '000'){
+      purityMap[key] = '1';
+      purity = join(purityMap.values);
+    }
+    setParams({'purity': purity});
     update();
+    StorageManger.setParams(purityMap);
+  }
+
+  String join(Iterable<String> i) {
+    List<String> list = [];
+    list.addAll(i);
+    return list.join('');
   }
 
   void setParams(Map<String, String> data) {
     params.addAll(data);
+    update();
+  }
+
+  @override
+  void onInit() {
+    getStorageParams();
+    super.onInit();
+  }
+
+  Future<void> getStorageParams() async {
+    var prefs = await StorageManger.prefs;
+    var cate = <String, String>{};
+    var purity = <String, String>{};
+    categoriesMap.forEach((key, value) {
+      String v = prefs.getString(key) ?? value;
+      cate.addAll({key: v});
+    });
+    purityMap.forEach((key, value) {
+      String v = prefs.getString(key) ?? value;
+      purity.addAll({key: v});
+    });
+    categoriesMap.addAll(cate);
+    purityMap.addAll(purity);
+    params.addAll({'categories': join(categoriesMap.values)});
+    params.addAll({'purity': join(purityMap.values)});
     update();
   }
 }
@@ -126,8 +170,27 @@ class BasicController extends GetxController {
     }
   }
 
+  void loadStart() {
+    loading = true;
+    update();
+  }
+
+  void loadMore() {}
+
   void renderer() {
     update();
+  }
+
+  void toViews(BuildContext context, int index) {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (_) => PicturePageView(
+                  pictures: pictures,
+                  curIndex: index,
+                  loadMore: loadMore,
+                  renderer: renderer,
+                )));
   }
 }
 
@@ -138,7 +201,7 @@ class PageLoadController extends BasicController {
 
   @override
   void onInit() {
-    getPictureList(this);
+    // getPictureList(this); // TODO
     super.onInit();
   }
 
@@ -150,63 +213,18 @@ class PageLoadController extends BasicController {
     this.total = total;
     this.seed = seed;
     update();
-    printError(info:"5435");
   }
 
+  @override
   void loadMore() {
     getPictureList(this);
   }
-
-  void toViews(BuildContext context, int index) {
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (_) => PictureViews(
-                  curIndex: index,
-                  load: this,
-                )));
-  }
-}
-
-Future<void> getPictureList(PageLoadController load) async {
-  if (load.loading) return;
-  if (load.pageNum != 1 && load.pictures.length >= load.total) return;
-  SearchQuery query = Get.find();
-  Map<String, String> params = <String, String>{}..addAll(query.params);
-  params['q'] = load.q;
-  params['page'] = "${load.pageNum}";
-  params['apikey'] ??= await StorageManger.getApiKey();
-  params['sorting'] = (load.sort.isEmpty ? params['sorting'] : load.sort)!;
-  if (params['sorting'] == 'random') {
-    params['seed'] = load.seed;
-  }
-  load.loading = true;
-  dio
-      .get(
-    '/api/v1/search',
-    queryParameters: params,
-  )
-      .then((response) {
-    load.loading = false;
-    SearchResult searchResult = SearchResult.fromJson(response.data);
-    final meta = searchResult.meta;
-    int total = 0;
-    String seed = '';
-    if (meta != null) {
-      total = meta.total;
-      if (params['sorting'] == 'random' && params['seed']?.isEmpty == true) {
-        params['seed'] = meta.seed;
-        seed = meta.seed;
-      }
-    }
-    load.setPictures(searchResult.data, total, seed);
-    // ignore: invalid_return_type_for_catch_error, avoid_print
-  }).catchError((error) => {print(error.toString())});
 }
 
 class CollectionController extends BasicController {
   List<FavData> collections = [];
   int collectionId = 0;
+
   void setCollection(List<FavData>? collections) {
     if (collections != null) {
       this.collections = collections;
@@ -232,8 +250,44 @@ class CollectionController extends BasicController {
     collectionId = id;
     pageNum = 1;
     update();
-    getFavorites(this);
+    // getFavorites(this); // TODO
   }
+
+  @override
+  void loadMore() {
+    getCollectionList(this);
+  }
+}
+
+Future<void> getPictureList(PageLoadController load) async {
+  if (load.loading) return;
+  if (load.pageNum != 1 && load.pictures.length >= load.total) return;
+  SearchQuery query = Get.find();
+  Map<String, String> params = <String, String>{}..addAll(query.params);
+  params['q'] = load.q;
+  params['page'] = "${load.pageNum}";
+  params['apikey'] ??= await StorageManger.getApiKey();
+  params['sorting'] = (load.sort.isEmpty ? params['sorting'] : load.sort)!;
+  if (params['sorting'] == 'random') {
+    params['seed'] = load.seed;
+  }
+  load.loadStart();
+  getPictureAPI(params).then((response) {
+    load.loading = false;
+    SearchResult searchResult = SearchResult.fromJson(response.data);
+    final meta = searchResult.meta;
+    int total = 0;
+    String seed = '';
+    if (meta != null) {
+      total = meta.total;
+      if (params['sorting'] == 'random' &&
+          (load.pageNum == 1 || load.seed.isEmpty == true)) {
+        seed = meta.seed;
+      }
+    }
+    load.setPictures(searchResult.data, total, seed);
+    // ignore: invalid_return_type_for_catch_error, avoid_print
+  }).catchError((error) => {print(error.toString())});
 }
 
 Future<void> getCollectionList(CollectionController load) async {
@@ -241,13 +295,8 @@ Future<void> getCollectionList(CollectionController load) async {
   Map<String, dynamic> params = {
     'apikey': await StorageManger.getApiKey(),
   };
-  load.loading = true;
-  dio
-      .get(
-    '/api/v1/collections',
-    queryParameters: params,
-  )
-      .then((response) {
+  load.loadStart();
+  getCollectionsAPI(params).then((response) {
     load.loading = false;
     FavoritesRes collectionList = FavoritesRes.fromJson(response.data);
     load.setCollection(collectionList.favData);
@@ -260,20 +309,16 @@ Future<void> getFavorites(CollectionController load) async {
   if (load.pageNum != 1 && load.pictures.length >= load.total) {
     return;
   }
+  SearchQuery query = Get.find();
   int id = load.collectionId;
   if (id == 0) return;
   var params = {
     'page': load.pageNum.toString(),
-    'purity': '111',
+    'purity': query.params['purity'],
     'apikey': await StorageManger.getApiKey(),
   };
   load.loading = true;
-  dio
-      .get(
-    '/api/v1/collections/${await StorageManger.getUserName()}/$id',
-    queryParameters: params,
-  )
-      .then((response) {
+  getFavoritesAPI(params, id).then((response) {
     load.loading = false;
     SearchResult favorites = SearchResult.fromJson(response.data);
     final meta = favorites.meta;
@@ -289,8 +334,7 @@ Future<PictureData> getPictureInfo(String id) async {
     return data;
   }
   String apiKey = await StorageManger.getApiKey();
-  dio_lib.Response res =
-      await dio.get('/api/v1/w/$id', queryParameters: {'apikey': apiKey});
+  var res = await dio.get('/api/v1/w/$id', queryParameters: {'apikey': apiKey});
   PictureRes response = PictureRes.fromJson(res.data);
   data = response.data!;
   store.updatePictureData(id, data);

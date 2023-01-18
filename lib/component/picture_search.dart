@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:getwidget/components/drawer/gf_drawer.dart';
 import 'package:wallhevan/component/picture_grid_view.dart';
 import 'package:wallhevan/store/store.dart';
 
-class SearchBarPage extends StatelessWidget {
+import '../pages/global_theme.dart';
+import '../pages/picture_filter.dart';
+
+class PictureSearch extends StatelessWidget {
   final String keyword;
   final String tag;
 
-  const SearchBarPage({super.key, required this.keyword, required this.tag});
+  const PictureSearch({super.key, required this.keyword, required this.tag});
 
   @override
   Widget build(BuildContext context) {
@@ -17,10 +21,17 @@ class SearchBarPage extends StatelessWidget {
       getPictureList(load);
     }
     return Scaffold(
+      drawer: Drawer(
+        width: 400,
+        // elevation: 0,
+        child: GlobalTheme.backImg(const PictureFilter()),
+      ),
       appBar: AppBar(
         leading: Builder(
           builder: (context) {
             return IconButton(
+                iconSize: 35,
+                padding:const EdgeInsets.fromLTRB(8, 8, 0, 8),
                 icon: const Icon(
                   Icons.menu,
                   color: Colors.white,
@@ -37,9 +48,10 @@ class SearchBarPage extends StatelessWidget {
               controller: TextEditingController(
                 text: load.q,
               ),
+              autofocus: keyword.isEmpty,
               textInputAction: TextInputAction.search,
               cursorColor: Colors.white,
-              style: const TextStyle(color: Colors.white),
+              style: const TextStyle(color: Colors.white,fontSize: 20),
               onSubmitted: (value) {
                 init(load,value);
               },
@@ -58,7 +70,6 @@ class SearchBarPage extends StatelessWidget {
         child: GetBuilder<PageLoadController>(
           tag: tag,
           builder: (load) {
-            printError(info:"24222");
             return PictureGridView(
                 pictures: load.pictures,
                 loadMore: load.loadMore,

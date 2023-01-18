@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:wallhevan/component/picture_grid_view.dart';
 import 'package:wallhevan/pages/global_theme.dart';
-import 'package:wallhevan/pages/fav_list.dart';
-import 'package:wallhevan/pages/search_query.dart';
+import 'package:wallhevan/pages/picture_filter.dart';
 import 'package:wallhevan/store/store.dart';
-
 
 class FavoritesPage extends StatefulWidget {
   const FavoritesPage({super.key});
@@ -14,7 +13,6 @@ class FavoritesPage extends StatefulWidget {
 }
 
 class _FavoritesPageState extends State<FavoritesPage> {
-  
   @override
   void initState() {
     super.initState();
@@ -40,11 +38,10 @@ class _FavoritesPageState extends State<FavoritesPage> {
 
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<CollectionController>(
-      builder: (controller) {
+    return GetBuilder<CollectionController>(builder: (controller) {
       return GlobalTheme.backImg(Scaffold(
-        backgroundColor: Colors.transparent,
-        body: NestedScrollView(
+          backgroundColor: Colors.transparent,
+          body: NestedScrollView(
             headerSliverBuilder: (context, sel) {
               return <Widget>[
                 SliverAppBar(
@@ -59,10 +56,16 @@ class _FavoritesPageState extends State<FavoritesPage> {
                 )
               ];
             },
-            body: const FavPictureList(
-              keepAlive: false,
-            )),
-      ));
+            body: RefreshIndicator(
+                onRefresh: () async {
+                  controller.init(renderer: true);
+                  return getCollectionList(controller);
+                },
+                child: PictureGridView(
+                    pictures: controller.pictures,
+                    loadMore: controller.loadMore,
+                    toViews: controller.toViews)),
+          )));
     });
   }
 }

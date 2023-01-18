@@ -2,11 +2,11 @@
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:shimmer_animation/shimmer_animation.dart';
-import 'package:wallhevan/store/search_response/thumbs.dart';
+import 'package:wallhevan/store/search_res/thumbs.dart';
 
-import '../store/search_response/picture_info.dart';
+import '../store/search_res/picture_info.dart';
 
-class PictureComp extends StatefulWidget {
+class PictureComp extends StatelessWidget {
   final double? pHeight;
   final double? halfWidth;
   final PictureInfo image;
@@ -23,16 +23,6 @@ class PictureComp extends StatefulWidget {
       required this.type,
       required this.url});
 
-  // factory PictureComp.create(BuildContext context,WallImage image){
-  //   double width = MediaQuery.of(context).size.width / 2;
-  //   double height = image.height / (image.width / width);
-  //   return PictureComp(
-  //     pHeight: height,
-  //     halfWidth: width,
-  //       image: image,
-  //       type: WallImage.previewPicture);
-  // }
-
   factory PictureComp.create(
       BuildContext context, PictureInfo picture, String url) {
     double width = MediaQuery.of(context).size.width / 2;
@@ -46,15 +36,9 @@ class PictureComp extends StatefulWidget {
     );
   }
 
-  @override
-  State<StatefulWidget> createState() => _PictureCompState();
-}
-
-class _PictureCompState extends State<PictureComp> {
-  EdgeInsets getPadding() {
+  EdgeInsets getPadding(BuildContext context) {
     var size = MediaQuery.of(context).size;
-    double height =
-        size.width * (widget.image.dimensionY / widget.image.dimensionX);
+    double height = size.width * (image.dimensionY / image.dimensionX);
     double padding = (size.height - height) / 2;
     padding = padding < 0 ? 0 : padding;
     return EdgeInsets.fromLTRB(0, padding, 0, 0);
@@ -63,26 +47,25 @@ class _PictureCompState extends State<PictureComp> {
   @override
   Widget build(BuildContext context) {
     return Container(
-        height: widget.pHeight,
-        width: widget.halfWidth,
+        height: pHeight,
+        width: halfWidth,
         padding: const EdgeInsets.all(2),
-        child: widget.type == PictureComp.pictureViews
+        child: type == PictureComp.pictureViews
             ? GestureDetector(
                 onTap: () {
-                  Navigator.pushNamed(context, '/picture',
-                      arguments: widget.image);
+                  Navigator.pushNamed(context, '/picture', arguments: image);
                 },
                 child: Padding(
-                  padding: getPadding(),
+                  padding: getPadding(context),
                   child: ExtendedImage.network(
-                    widget.url,
+                    url,
                     fit: BoxFit.scaleDown,
                     // enableSlideOutPage:true,
                     cache: true,
                     loadStateChanged: (ExtendedImageState state) {
                       switch (state.extendedImageLoadState) {
                         case LoadState.loading:
-                          Thumbs? thumbs = widget.image.thumbs;
+                          Thumbs? thumbs = image.thumbs;
                           return ExtendedImage.network(
                             thumbs.original!,
                             width: double.infinity,
@@ -99,16 +82,16 @@ class _PictureCompState extends State<PictureComp> {
                   ),
                 ),
               )
-            : widget.type == PictureComp.fallSizePicture
+            : type == PictureComp.fallSizePicture
                 ? ExtendedImage.network(
-                    widget.url,
+                    url,
                     fit: BoxFit.scaleDown,
                     // enableSlideOutPage:true,
                     cache: true,
                     loadStateChanged: (ExtendedImageState state) {
                       switch (state.extendedImageLoadState) {
                         case LoadState.loading:
-                          Thumbs? thumbs = widget.image.thumbs;
+                          Thumbs? thumbs = image.thumbs;
                           return ExtendedImage.network(
                             thumbs.original!,
                             width: double.infinity,
@@ -137,7 +120,7 @@ class _PictureCompState extends State<PictureComp> {
                     //cancelToken: cancellationToken,
                   )
                 : ExtendedImage.network(
-                    widget.url,
+                    url,
                     fit: BoxFit.fitWidth,
                     cache: true,
                     loadStateChanged: (ExtendedImageState state) {

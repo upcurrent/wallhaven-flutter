@@ -23,6 +23,7 @@ class MessageLookup extends MessageLookupByLibrary {
   final messages = _notInlinedMessages(_notInlinedMessages);
   static Map<String, Function> _notInlinedMessages(_) => <String, Function>{
         "anime": MessageLookupByLibrary.simpleMessage("动漫"),
+        "categories": MessageLookupByLibrary.simpleMessage("分类"),
         "favorites": MessageLookupByLibrary.simpleMessage("收藏量"),
         "favoritesTab": MessageLookupByLibrary.simpleMessage("收藏"),
         "general": MessageLookupByLibrary.simpleMessage("普通"),
@@ -32,9 +33,11 @@ class MessageLookup extends MessageLookupByLibrary {
         "more": MessageLookupByLibrary.simpleMessage("查看相似图片"),
         "my": MessageLookupByLibrary.simpleMessage("我的"),
         "people": MessageLookupByLibrary.simpleMessage("人物"),
+        "purity": MessageLookupByLibrary.simpleMessage("纯度"),
         "random": MessageLookupByLibrary.simpleMessage("随机"),
         "relevance": MessageLookupByLibrary.simpleMessage("最相关"),
         "search": MessageLookupByLibrary.simpleMessage("搜索"),
+        "sorting": MessageLookupByLibrary.simpleMessage("排序规则"),
         "t_1M": MessageLookupByLibrary.simpleMessage("最近1月"),
         "t_1d": MessageLookupByLibrary.simpleMessage("昨天"),
         "t_1w": MessageLookupByLibrary.simpleMessage("最近1周"),
@@ -43,6 +46,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "t_3d": MessageLookupByLibrary.simpleMessage("最近3天"),
         "t_6M": MessageLookupByLibrary.simpleMessage("最近6月"),
         "topList": MessageLookupByLibrary.simpleMessage("排行榜"),
+        "topRange": MessageLookupByLibrary.simpleMessage("时间范围"),
         "views": MessageLookupByLibrary.simpleMessage("点击量")
       };
 }

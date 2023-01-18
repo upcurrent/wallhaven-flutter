@@ -269,6 +269,46 @@ class S {
       args: [],
     );
   }
+
+  /// `Categories`
+  String get categories {
+    return Intl.message(
+      'Categories',
+      name: 'categories',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Purity`
+  String get purity {
+    return Intl.message(
+      'Purity',
+      name: 'purity',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `TopRange`
+  String get topRange {
+    return Intl.message(
+      'TopRange',
+      name: 'topRange',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Sorting`
+  String get sorting {
+    return Intl.message(
+      'Sorting',
+      name: 'sorting',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<S> {
