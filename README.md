@@ -1,5 +1,5 @@
 # wallhevan-flutter
-The wallhevan.cc flutter project
+The wallhaven.cc flutter project
 
 
 Thanks [wallhaven.cc](https://wallhaven.cc)
