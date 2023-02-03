@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:wallhevan/pages/global_theme.dart';
+import 'package:wallhaven/pages/global_theme.dart';
 
 class Account extends StatelessWidget {
   const Account({super.key});

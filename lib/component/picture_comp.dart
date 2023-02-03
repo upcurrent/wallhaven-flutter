@@ -2,7 +2,7 @@
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:shimmer_animation/shimmer_animation.dart';
-import 'package:wallhevan/store/search_res/thumbs.dart';
+import 'package:wallhaven/store/search_res/thumbs.dart';
 
 import '../store/search_res/picture_info.dart';
 

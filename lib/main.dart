@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get/get.dart';
-import 'package:getwidget/components/drawer/gf_drawer.dart';
+import 'package:wallhaven/account/login.dart';
 
-import 'package:wallhevan/pages/global_theme.dart';
-import 'package:wallhevan/store/store.dart';
+import 'package:wallhaven/pages/global_theme.dart';
+import 'package:wallhaven/store/store.dart';
 import 'pages/favorites.dart';
 import 'pages/home.dart';
 import 'pages/picture_filter.dart';
@@ -180,7 +180,7 @@ class _MyHomePageState extends State<MyHomePage> {
             HomePage(),
             PictureFilter(),
             FavoritesPage(),
-            Account()
+            Login()
           ],
         )));
   }

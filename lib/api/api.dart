@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:cookie_jar/cookie_jar.dart';
 import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:wallhevan/store/store.dart' show StorageManger;
+import 'package:wallhaven/store/store.dart' show StorageManger;
 import 'cookie.dart';
 
 Dio dio = Dio(BaseOptions(baseUrl: Api.url));

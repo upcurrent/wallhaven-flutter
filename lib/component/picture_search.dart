@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:getwidget/components/drawer/gf_drawer.dart';
-import 'package:wallhevan/component/picture_grid_view.dart';
-import 'package:wallhevan/store/store.dart';
+import 'package:wallhaven/component/picture_grid_view.dart';
+import 'package:wallhaven/store/store.dart';
 
 import '../pages/global_theme.dart';
 import '../pages/picture_filter.dart';

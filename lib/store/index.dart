@@ -3,9 +3,9 @@
 // import 'package:redux/redux.dart';
 // import 'package:html/parser.dart' show parse;
 // import 'package:shared_preferences/shared_preferences.dart';
-// import 'package:wallhevan/api/api.dart';
-// import 'package:wallhevan/store/collections/fav_data.dart';
-// import 'package:wallhevan/store/search_response/search_result.dart';
+// import 'package:wallhaven/api/api.dart';
+// import 'package:wallhaven/store/collections/fav_data.dart';
+// import 'package:wallhaven/store/search_response/search_result.dart';
 // import 'collections/fav_response.dart';
 // import 'search_response/picture_info.dart';
 

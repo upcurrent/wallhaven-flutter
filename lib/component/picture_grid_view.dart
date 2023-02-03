@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:get/get.dart';
-import 'package:wallhevan/pages/global_theme.dart';
-import 'package:wallhevan/store/search_res/picture_info.dart';
+import 'package:wallhaven/pages/global_theme.dart';
+import 'package:wallhaven/store/search_res/picture_info.dart';
 
 import '/component/picture_comp.dart';
 import '/store/store.dart';

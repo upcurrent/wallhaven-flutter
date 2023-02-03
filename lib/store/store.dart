@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:wallhevan/component/pictire_page_view.dart';
-import 'package:wallhevan/store/search_res/picture_info.dart';
-import 'package:wallhevan/store/search_res/search_result.dart';
-import 'package:wallhevan/store/collection_res/fav_data.dart';
+import 'package:wallhaven/component/picture_page_view.dart';
+import 'package:wallhaven/store/search_res/picture_info.dart';
+import 'package:wallhaven/store/search_res/search_result.dart';
+import 'package:wallhaven/store/collection_res/fav_data.dart';
 import '/api/api.dart';
 import 'collection_res/fav_response.dart';
-import 'package:wallhevan/store/picture_res/picture_data.dart';
-import 'package:wallhevan/store/picture_res/picture_res.dart';
+import 'package:wallhaven/store/picture_res/picture_data.dart';
+import 'package:wallhaven/store/picture_res/picture_res.dart';
 
 class StorageManger {
   static SharedPreferences? _prefs;
@@ -22,12 +22,12 @@ class StorageManger {
 
   static Future<String> getApiKey() async {
     SharedPreferences prefs = await StorageManger.prefs;
-    return prefs.getString('apiKey') ?? 'MJq2IZyeA8QI43iccfNDJSpWQ8qKw8w5';
+    return prefs.getString('apiKey') ?? '';
   }
 
   static Future<String> getUserName() async {
     SharedPreferences prefs = await StorageManger.prefs;
-    return prefs.getString('userName') ?? 'ikism';
+    return prefs.getString('userName') ?? '';
   }
 
   static void setParams(Map<String, String> params) async {
@@ -37,17 +37,25 @@ class StorageManger {
     });
   }
 
-  static Future<String> getParams() async {
-    SharedPreferences prefs = await StorageManger.prefs;
-    return prefs.getString('userName') ?? 'ikism';
-  }
 }
 
 class StoreController extends GetxController {
   var cachePic = <String>{};
   var cachePictureData = <String, PictureData>{};
+  var apiKey = '';
+  var userName = '';
   final ScrollController homeScrollCtrl =
       ScrollController(keepScrollOffset: false);
+
+  void updateApiKey(String key){
+    apiKey = key;
+    update();
+  }
+
+  void updateUserName(String name){
+    userName = name;
+    update();
+  }
 
   void updatePic(String path) {
     if (cachePic.contains(path)) return;
@@ -201,7 +209,7 @@ class PageLoadController extends BasicController {
 
   @override
   void onInit() {
-    // getPictureList(this); // TODO
+    getPictureList(this); // TODO
     super.onInit();
   }
 
@@ -250,7 +258,7 @@ class CollectionController extends BasicController {
     collectionId = id;
     pageNum = 1;
     update();
-    // getFavorites(this); // TODO
+    getFavorites(this); // TODO
   }
 
   @override

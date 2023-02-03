@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:getwidget/components/button/gf_button.dart';
 import 'package:getwidget/shape/gf_button_shape.dart';
 import 'package:get/get.dart';
-import 'package:wallhevan/pages/global_theme.dart';
-import 'package:wallhevan/store/store.dart';
+import 'package:wallhaven/pages/global_theme.dart';
+import 'package:wallhaven/store/store.dart';
 import '/generated/l10n.dart';
 
 class PictureFilter extends StatelessWidget {

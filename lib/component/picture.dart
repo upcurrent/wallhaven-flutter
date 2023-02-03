@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:wallhevan/component/picture_comp.dart';
+import 'package:wallhaven/component/picture_comp.dart';
 
 import '../pages/global_theme.dart';
 import '../store/search_res/picture_info.dart';

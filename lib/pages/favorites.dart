@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:wallhevan/component/picture_grid_view.dart';
-import 'package:wallhevan/pages/global_theme.dart';
-import 'package:wallhevan/pages/picture_filter.dart';
-import 'package:wallhevan/store/store.dart';
+import 'package:wallhaven/component/picture_grid_view.dart';
+import 'package:wallhaven/pages/global_theme.dart';
+import 'package:wallhaven/pages/picture_filter.dart';
+import 'package:wallhaven/store/store.dart';
 
 class FavoritesPage extends StatefulWidget {
   const FavoritesPage({super.key});

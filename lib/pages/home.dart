@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:wallhevan/component/picture_grid_view.dart';
+import 'package:wallhaven/component/picture_grid_view.dart';
 import '../component/picture_search.dart';
 import '../store/store.dart';
 
