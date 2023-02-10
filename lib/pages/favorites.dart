@@ -62,9 +62,11 @@ class _FavoritesPageState extends State<FavoritesPage> {
                   return getCollectionList(controller);
                 },
                 child: PictureGridView(
-                    pictures: controller.pictures,
-                    loadMore: controller.loadMore,
-                    toViews: controller.toViews)),
+                  pictures: controller.pictures,
+                  loadMore: controller.loadMore,
+                  toViews: controller.toViews,
+                  keepAlive: controller.pictures.isNotEmpty,
+                )),
           )));
     });
   }

@@ -36,7 +36,6 @@ class StorageManger {
       prefs.setString(key, value);
     });
   }
-
 }
 
 class StoreController extends GetxController {
@@ -46,13 +45,14 @@ class StoreController extends GetxController {
   var userName = '';
   final ScrollController homeScrollCtrl =
       ScrollController(keepScrollOffset: false);
+  final pageViewController = PageController(initialPage: 0, keepPage: true);
 
-  void updateApiKey(String key){
+  void updateApiKey(String key) {
     apiKey = key;
     update();
   }
 
-  void updateUserName(String name){
+  void updateUserName(String name) {
     userName = name;
     update();
   }
@@ -118,7 +118,7 @@ class SearchQuery extends GetxController {
   void setPurity(String key) {
     purityMap[key] = purityMap[key] == '0' ? '1' : '0';
     var purity = join(purityMap.values);
-    if(purity == '000'){
+    if (purity == '000') {
       purityMap[key] = '1';
       purity = join(purityMap.values);
     }
@@ -232,7 +232,6 @@ class PageLoadController extends BasicController {
 class CollectionController extends BasicController {
   List<FavData> collections = [];
   int collectionId = 0;
-
   void setCollection(List<FavData>? collections) {
     if (collections != null) {
       this.collections = collections;
@@ -300,8 +299,10 @@ Future<void> getPictureList(PageLoadController load) async {
 
 Future<void> getCollectionList(CollectionController load) async {
   if (load.loading) return;
+  var apikey = await StorageManger.getApiKey();
+  if(apikey.isEmpty) return;
   Map<String, dynamic> params = {
-    'apikey': await StorageManger.getApiKey(),
+    'apikey': apikey,
   };
   load.loadStart();
   getCollectionsAPI(params).then((response) {

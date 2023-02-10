@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wallhaven/account/login.dart';
 
 import 'package:wallhaven/pages/global_theme.dart';
@@ -95,7 +96,6 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int pageIndex = 0;
-  PageController _controller = PageController();
 
   final StoreController storeController = Get.find();
 
@@ -103,8 +103,18 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     Get.put(SearchQuery());
     Get.put(CollectionController());
-    _controller = PageController(initialPage: pageIndex, keepPage: true);
+    Get.putAsync<SharedPreferences>(() async {
+      final prefs = await SharedPreferences.getInstance();
+      return prefs;
+    });
     super.initState();
+  }
+  bool jumpAccount (String apikey){
+    if(apikey.isEmpty){
+      storeController.pageViewController.jumpToPage(3);
+      return true;
+    }
+    return false;
   }
 
   void _onPageChanged(int index, Function callback) async {
@@ -114,6 +124,11 @@ class _MyHomePageState extends State<MyHomePage> {
     //   callback(rememberCookie == null);
     //   return;
     // }
+    if (index == 2) {
+      String apikey = await StorageManger.getApiKey();
+      callback(jumpAccount(apikey));
+      return;
+    }
     if (pageIndex == index && index == 0) {
       storeController.homeScrollTop();
     }
@@ -159,11 +174,11 @@ class _MyHomePageState extends State<MyHomePage> {
                       flag
                           // ? Navigator.pushNamed(context, '/login')
                           ? 0
-                          : _controller.jumpToPage(index),
+                          : storeController.pageViewController.jumpToPage(index),
                     })),
         body: GlobalTheme.backImg(PageView(
           // physics: const NeverScrollableScrollPhysics(),
-          controller: _controller,
+          controller: storeController.pageViewController,
           onPageChanged: (index) => _onPageChanged(index, (flag) {
             if (flag) {
               // Navigator.pushNamed(context, '/login');
